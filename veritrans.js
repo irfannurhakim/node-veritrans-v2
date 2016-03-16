@@ -8,7 +8,7 @@ function Veritrans(params){
 }
 
 Veritrans.prototype.charge = function(params){
-
+	if(!params) throw new Error('params required');
 }
 
 Veritrans.prototype.capture = function (params){
@@ -37,6 +37,10 @@ Veritrans.prototype.setDevelopmentMode = function(developmentMode){
 
 Veritrans.prototype.getDevelopmentMode = function(){
 	return this.isDevelopment;
+}
+
+Veritrans.prototype.getServerKey = function(){
+	return this.serverKey;
 }
 
 module.exports = Veritrans;
