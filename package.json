@@ -1,0 +1,13 @@
+{
+  "name": "node-veritrans",
+  "description": "Nodejs Lib for Veritrans",
+  "version": "0.0.1",
+  "author": "Irfan Nurhakim <irfanarisnurhakim@gmail.com>",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "request" : ">=2.69.0"  
+  }
+}

@@ -1,5 +1,6 @@
 var DEV_BASE_URL = "https://api.sandbox.veritrans.co.id/v2";
 var PROD_BASE_URL = "https://api.veritrans.co.id/v2";
+var request = require('request');
 
 function Veritrans(params){
 	this.isDevelopment = params.isDevelopment;
@@ -7,8 +8,16 @@ function Veritrans(params){
 	this.serverKey = params.serverKey;
 }
 
-Veritrans.prototype.charge = function(params){
+Veritrans.prototype.tokenize = function(params, callback){
 	if(!params) throw new Error('params required');
+
+
+}
+
+Veritrans.prototype.charge = function(params, callback){
+	if(!params) throw new Error('params required');
+
+	request.post(this.baseUrl + '/charge', params, callback);
 }
 
 Veritrans.prototype.capture = function (params){
