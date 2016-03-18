@@ -5,19 +5,28 @@ var request = require('request');
 function Veritrans(params){
 	this.isDevelopment = params.isDevelopment;
 	this.baseUrl = params.isDevelopment ? DEV_BASE_URL : PROD_BASE_URL;
-	this.serverKey = params.serverKey;
+	this.serverKey = this._generateAuthKey(params.serverKey);
 }
 
 Veritrans.prototype.tokenize = function(params, callback){
 	if(!params) throw new Error('params required');
-
-
 }
 
 Veritrans.prototype.charge = function(params, callback){
 	if(!params) throw new Error('params required');
 
-	request.post(this.baseUrl + '/charge', params, callback);
+	var options = {
+		"method" : "POST",
+		"url" : this.baseUrl + "/charge",
+		"headers" : {
+			"Content-type" : "application/json",
+			"Accept" : "application/json",
+			"Authorization" : "Basic " + this.serverKey
+		},
+		"body" : JSON.stringify(params)
+	}
+
+	request(options, callback);
 }
 
 Veritrans.prototype.capture = function (params){
@@ -50,6 +59,10 @@ Veritrans.prototype.getDevelopmentMode = function(){
 
 Veritrans.prototype.getServerKey = function(){
 	return this.serverKey;
+}
+
+Veritrans.prototype._generateAuthKey = function(serverKey){
+	return new Buffer(serverKey + ":").toString('base64');
 }
 
 module.exports = Veritrans;

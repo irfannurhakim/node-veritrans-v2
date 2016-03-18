@@ -1,6 +1,6 @@
 var assert = require('assert');
 var Veritrans = require('../veritrans');
-var params = { isDevelopment: true, serverKey: 'VT-server-YMm3gKChvw8aRjMCIEU1frtl' }; 
+var params = { "isDevelopment": true, "serverKey": "VT-server-YMm3gKChvw8aRjMCIEU1frtl" }; 
 var vt = new Veritrans(params);
 
 describe('Veritrans App Init', function(){
@@ -13,7 +13,7 @@ describe('Veritrans App Init', function(){
 	});
 
 	it('should retrun server key', function(){
-		assert.equal(vt.getServerKey(), params.serverKey);
+		assert.equal(vt.getServerKey(), vt._generateAuthKey(params.serverKey));
 	});
 
 	it('should return development base url', function(){
@@ -34,7 +34,7 @@ describe('Charge Method', function(){
 	it('should return error from veritrans when send empty object', function(done){
 		var params = {};
 		vt.charge(params, function(a,b,c){
-			assert.equal(JSON.parse(c).status_code, "500");
+			assert.equal(JSON.parse(c).status_code, "400");
 			done();
 		});
 	});
@@ -87,8 +87,7 @@ describe('Charge Method', function(){
 		}
 			
 		vt.charge(params, function(a,b,c){
-			console.log(c);
-			assert.equal(JSON.parse(c).status_code, "500");
+			assert.equal(JSON.parse(c).status_code, "411");
 			done();
 		});
 	});
