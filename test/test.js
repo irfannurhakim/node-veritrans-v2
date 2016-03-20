@@ -1,7 +1,9 @@
 var assert = require('assert');
 var Veritrans = require('../veritrans');
-var params = { "isDevelopment": true, "serverKey": "VT-server-YMm3gKChvw8aRjMCIEU1frtl" }; 
+var params = { "isDevelopment": true, "serverKey": "VT-server-YMm3gKChvw8aRjMCIEU1frtl", "clientKey" : "VT-client-RrZ9EtG8fIH8UliB" }; 
 var vt = new Veritrans(params);
+var guid = require('node-uuid');
+var orderId = guid.v4();
 
 describe('Veritrans App Init', function(){
 	it('should return type of Veritrans Object', function(){
@@ -21,6 +23,25 @@ describe('Veritrans App Init', function(){
 	});
 });
 
+describe('Get Token Method', function(){
+	it('should return token from veritrans', function(done){
+		var payload = {
+			"card_number" : 4811111111111114,
+			"card_exp_month" : "01",
+			"card_exp_year" : 2020,
+			"card_cvv" : 123,
+			"secure" : false,
+			"gross_amount" : 145000,
+			"client_key" : params.clientKey
+		}
+
+		vt.token(payload, function(a,b,c){
+			assert.equal(JSON.parse(c).status_code, "200");
+			vt.setToken(JSON.parse(c).token_id);
+			done();
+		});
+	});
+});
 
 describe('Charge Method', function(){
 	it('should return type of charge method', function(){
@@ -32,22 +53,22 @@ describe('Charge Method', function(){
 	});
 
 	it('should return error from veritrans when send empty object', function(done){
-		var params = {};
-		vt.charge(params, function(a,b,c){
+		var payload = {};
+		vt.charge(payload, function(a,b,c){
 			assert.equal(JSON.parse(c).status_code, "400");
 			done();
 		});
 	});
 
 	it('should retrun ok when send actual data', function(done){
-		var params = {
+		var payload = {
 			"payment_type": "credit_card",
 			"transaction_details": {
-				"order_id": "C17550",
+				"order_id": orderId,
 				"gross_amount": 145000
 			},
 			"credit_card": {
-				"token_id": "1234134324"
+				"token_id": vt.getToken()
 			},
 			"item_details": [{
 				"id": "a1",
@@ -86,9 +107,21 @@ describe('Charge Method', function(){
 			}
 		}
 			
-		vt.charge(params, function(a,b,c){
-			assert.equal(JSON.parse(c).status_code, "411");
+		vt.charge(payload, function(a,b,c){
+			assert.equal(JSON.parse(c).status_code, "200");
 			done();
 		});
+	});
+});
+
+describe('Get Transaction Status Method', function(){
+	it('shuould return transaction status', function(done){
+		var payload = {
+			"order_id" : orderId
+		}
+		vt.status(payload, function(a,b,c){
+			assert.equal(JSON.parse(c).status_code, "200");
+		});
+		done();
 	});
 });
